@@ -18,10 +18,12 @@ pthread_mutex_t x_mutex;
 pthread_cond_t x_cond;
 
 /* Função Barreira */
-void barreira(int nthreads) {
+void barreira(int thread_id) {
+    printf("Thread %d entrou na barreira\n", thread_id);
     pthread_mutex_lock(&x_mutex);
     if(counter == (nthreads - 1)) {
         pthread_cond_broadcast(&x_cond);
+        printf("Threads saíram da barreira\n");
         counter = 0;
     } else {
         counter++;
@@ -42,11 +44,11 @@ void *soma_vetor(void *arg) {
             somaLocal += vector[i];
         }
 
-        barreira(nthreads);
+        barreira(id);
 
         vector[id] = rand() % 10;
 
-        barreira(nthreads);
+        barreira(id);
     }
 
     pthread_exit((void *) somaLocal);
